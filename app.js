@@ -10,74 +10,76 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-function app(){
+
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-function inputAnswers() {
-    return inquirer.prompt([
-      {
-        type: "list",
-        name: "employeeType",
-        message: ["Manager", "Engineer", "Intern"]
-      },
-      {
-        type: "input",
-        name: "name",
-        message: "Please enter name:"
-      },
-      {
-        type: "input",
-        name: "Id",
-        message: "Please enter ID:"
-       },
-      {
-        type: "input",
-        name: "email",
-        message: "Please enter email address:"
-      },
-      {
-        type: "input",
-        name: "office",
-        message: "Please enter office number:",
-        when: function(answers) {
-            const value = answers.employeeType === "Manager" ? true : false;
-            return value;
-        }
-      },
-      {
-        type: "input",
-        name: "username",
-        message: "Please enter GitHub username:",
-        when: function(answers) {
-            const value = answers.employeeType === "Engineer" ? true : false;
-            return value;
-        }
-      },
-      {
-        type: "input",
-        name: "school",
-        message: "Please enter school attended:",
-        when: function(answers) {
-            const value = answers.employeeType === "Intern" ? true : false;
-            return value;
-        }
-      },
-    ]);
-}
 
-    // After the user has input all employees desired, call the `render` function (required
-    // above) and pass in an array containing all employee objects; the `render` function will
-    // generate and return a block of HTML including templated divs for each employee!
-
-    function team() {
-        if (!fs.existsSync(OUTPUT_DIR)) {
-            fs.mkdirSync(OUTPUT_DIR)
+function app(){
+  function inputAnswers() {
+      return inquirer.prompt([
+        {
+          type: "list",
+          name: "employeeType",
+          message: ["Manager", "Engineer", "Intern"]
+        },
+        {
+          type: "input",
+          name: "name",
+          message: "Please enter name:"
+        },
+        {
+          type: "input",
+          name: "Id",
+          message: "Please enter ID:"
+        },
+        {
+          type: "input",
+          name: "email",
+          message: "Please enter email address:"
+        },
+        {
+          type: "input",
+          name: "office",
+          message: "Please enter office number:",
+          when: function(answers) {
+            const value = answers.employeeType == "Manager" ? true : false;
+            return value;
+          }
+        },
+        {
+          type: "input",
+          name: "username",
+          message: "Please enter GitHub username:",
+          when: function(answers) {
+            const value = answers.employeeType == "Engineer" ? true : false;
+            return value;
+          }
+        },
+        {
+          type: "input",
+          name: "school",
+          message: "Please enter school attended:",
+          when: function(answers) {
+            const value = answers.employeeType == "Intern" ? true : false;
+            return value;
+          }
         }
-        fs.writeFileSync(outputPath, render(answers), "utf-8");
+      ]);
+  }
+
+      // After the user has input all employees desired, call the `render` function (required
+      // above) and pass in an array containing all employee objects; the `render` function will
+      // generate and return a block of HTML including templated divs for each employee!
+
+  function team() {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR)
     }
-
-    inputAnswers();
-
+    fs.writeFileSync(outputPath, render(answers), "utf-8");
+  }
+      
+  inputAnswers();
+}
     app();
 
 
@@ -96,5 +98,3 @@ function inputAnswers() {
     // for further information. Be sure to test out each class and verify it generates an
     // object with the correct structure and methods. This structure will be crucial in order
     // for the provided `render` function to work! ```
-
-}
