@@ -85,17 +85,17 @@ const employee = [];
           const manager = new Manager(answers.name, answers.Id, answers.email, answers.office);
           console.log(manager);
           employee.push(manager);
-          addEmployee();
+          inputAnswers();
         } else if (answers.employeeType === "Engineer") {
           const engineer = new Engineer(answers.name, answers.Id, answers.email, answers.username);
           console.log(engineer);
           employee.push(engineer);
-          addEmployee();
+          inputAnswers();
         } else if (answers.employeeType === "Intern") {
           const intern = new Engineer(answers.name, answers.Id, answers.email, answers.school);
           console.log(intern);
           employee.push(intern);
-          addEmployee();
+          inputAnswers();
         }
       })
 
