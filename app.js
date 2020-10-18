@@ -10,39 +10,49 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const employee = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
-function app(){
   function inputAnswers() {
-      return inquirer.prompt([
+      inquirer.prompt([
         {
           type: "list",
           name: "employeeType",
-          message: ["Manager", "Engineer", "Intern"]
+          message: "What type of employee are you adding?",
+          choices: ["Manager", "Engineer", "Intern", "No additional employees needed"]
         },
         {
           type: "input",
           name: "name",
-          message: "Please enter name:"
+          message: "Please enter the employee's name:",
+          when: function(answers) {
+            return answers.employeeType !== "No additional employees needed"
+          }
         },
         {
           type: "input",
           name: "Id",
-          message: "Please enter ID:"
+          message: "Please enter the employee's ID:",
+          when: function(answers) {
+            return answers.employeeType !== "No additional employees needed"
+          }
         },
         {
           type: "input",
           name: "email",
-          message: "Please enter email address:"
+          message: "Please enter the employee's email address:",
+          when: function(answers) {
+            return answers.employeeType !== "No additional employees needed"
+          }
         },
         {
           type: "input",
           name: "office",
-          message: "Please enter office number:",
+          message: "Please enter the employee's office number:",
           when: function(answers) {
-            const value = answers.employeeType == "Manager" ? true : false;
+            const value = answers.employeeType == "Manager";
             return value;
           }
         },
@@ -51,7 +61,7 @@ function app(){
           name: "username",
           message: "Please enter GitHub username:",
           when: function(answers) {
-            const value = answers.employeeType == "Engineer" ? true : false;
+            const value = answers.employeeType == "Engineer";
             return value;
           }
         },
@@ -60,27 +70,55 @@ function app(){
           name: "school",
           message: "Please enter school attended:",
           when: function(answers) {
-            const value = answers.employeeType == "Intern" ? true : false;
+            const value = answers.employeeType == "Intern";
             return value;
           }
+        },
+        // {
+        //   type: "list",
+        //   name: "addAdditional",
+        //   message: "Do you need to add any additional employees?",
+        //   choices: ["All done!", "Add another"]
+        // },  get to start over or move forward??
+      ]).then(answers => {
+        if (answers.employeeType === "Manager") {
+          const manager = new Manager(answers.name, answers.Id, answers.email, answers.office);
+          console.log(manager);
+          employee.push(manager);
+          addEmployee();
+        } else if (answers.employeeType === "Engineer") {
+          const engineer = new Engineer(answers.name, answers.Id, answers.email, answers.username);
+          console.log(engineer);
+          employee.push(engineer);
+          addEmployee();
+        } else if (answers.employeeType === "Intern") {
+          const intern = new Engineer(answers.name, answers.Id, answers.email, answers.school);
+          console.log(intern);
+          employee.push(intern);
+          addEmployee();
         }
-      ]);
+      })
+
+      function createFile() {
+        fs.existsSync("output") || fs.mkdirSync("output");
+        fs.writeFile(outputPath, render(employee), function (err) {
+          if (err){
+            console.log(err)
+          } else {
+            console.log("Success!")
+          }
+          })
+        }
+
   }
 
-      // After the user has input all employees desired, call the `render` function (required
+  inputAnswers();
+
+
+// After the user has input all employees desired, call the `render` function (required
       // above) and pass in an array containing all employee objects; the `render` function will
       // generate and return a block of HTML including templated divs for each employee!
 
-  function team() {
-    if (!fs.existsSync(OUTPUT_DIR)) {
-    fs.mkdirSync(OUTPUT_DIR)
-    }
-    fs.writeFileSync(outputPath, render(answers), "utf-8");
-  }
-      
-  inputAnswers();
-}
-    app();
 
 
     // After you have your html, you're now ready to create an HTML file using the HTML
