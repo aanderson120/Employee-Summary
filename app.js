@@ -82,19 +82,19 @@ const employee = [];
         // },  get to start over or move forward??
       ]).then(answers => {
         if (answers.employeeType === "Manager") {
-          const manager = new Manager(answers.name, answers.Id, answers.email, answers.office);
-          console.log(manager);
-          employee.push(manager);
+          const addManager = new Manager(answers.name, answers.Id, answers.email, answers.office);
+          console.log(addManager);
+          employee.push(addManager);
           inputAnswers();
         } else if (answers.employeeType === "Engineer") {
-          const engineer = new Engineer(answers.name, answers.Id, answers.email, answers.username);
-          console.log(engineer);
-          employee.push(engineer);
+          const addEngineer = new Engineer(answers.name, answers.Id, answers.email, answers.username);
+          console.log(addEngineer);
+          employee.push(addEngineer);
           inputAnswers();
         } else if (answers.employeeType === "Intern") {
-          const intern = new Engineer(answers.name, answers.Id, answers.email, answers.school);
-          console.log(intern);
-          employee.push(intern);
+          const addIntern = new Intern(answers.name, answers.Id, answers.email, answers.school);
+          console.log(addIntern);
+          employee.push(addIntern);
           inputAnswers();
         } else if (answers.employeeType === "No additional employees needed") {
           createSummary();
