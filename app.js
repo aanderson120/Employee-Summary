@@ -96,10 +96,12 @@ const employee = [];
           console.log(intern);
           employee.push(intern);
           inputAnswers();
+        } else if (answers.employeeType === "No additional employees needed") {
+          createSummary();
         }
       })
 
-      function createFile() {
+      function createSummary() {
         fs.existsSync("output") || fs.mkdirSync("output");
         fs.writeFile(outputPath, render(employee), function (err) {
           if (err){
