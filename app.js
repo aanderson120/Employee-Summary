@@ -9,132 +9,176 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const { type } = require("os");
 
 const employee = [];
 
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-
   function inputAnswers() {
+    inquirer.prompt([
+      {
+        type: "list",
+        name: "employeeType",
+        message: "What type of employee are you adding?",
+        choices: ["Manager", "Engineer", "Intern"]
+      },
+    ]).then(chooseRole => {
+      switch(chooseRole.employeeType) {
+        case "Manager":
+          addManager();
+          break;
+        case "Engineer":
+          addEngineer();
+          break;
+        case "Intern":
+          addIntern();
+          break;
+        default:
+          inputAnswers();
+        }
+      });
+
+    function addManager() {
       inquirer.prompt([
         {
-          type: "list",
-          name: "employeeType",
-          message: "What type of employee are you adding?",
-          choices: ["Manager", "Engineer", "Intern", "No additional employees needed"]
-        },
-        {
           type: "input",
-          name: "name",
+          name: "managerName",
           message: "Please enter the employee's name:",
-          when: function(answers) {
-            return answers.employeeType !== "No additional employees needed"
-          }
         },
         {
           type: "input",
-          name: "Id",
+          name: "managerId",
           message: "Please enter the employee's ID:",
-          when: function(answers) {
-            return answers.employeeType !== "No additional employees needed"
-          }
         },
         {
           type: "input",
-          name: "email",
+          name: "managerEmail",
           message: "Please enter the employee's email address:",
-          when: function(answers) {
-            return answers.employeeType !== "No additional employees needed"
-          }
         },
         {
           type: "input",
-          name: "office",
-          message: "Please enter the employee's office number:",
-          when: function(answers) {
-            const value = answers.employeeType == "Manager";
-            return value;
+          name: "managerOffice",
+          message: "Please enter the office number:",
+        },
+        {
+          type: "list",
+          name: "addAdditional",
+          message: "Do you need to add any additional employees?",
+          choices: ["All done!", "Add another"]
+        }
+        ]).then(answers => {
+          if (answers.addAdditional === "All done!") {
+            const manager = new Manager(answers.managerName, answers.managerId, answers.managerEmail, answers.managerOffice);
+            // console.log(manager)
+            employee.push(manager);
+            createSummary();
           }
+          else if (answers.addAdditional === "Add another") {
+            const manager = new Manager(answers.managerName, answers.managerId, answers.managerEmail, answers.managerOffice);
+            // console.log(manager)
+            employee.push(manager);
+            inputAnswers();
+          }
+        }) 
+      }
+
+    function addEngineer() {
+      inquirer.prompt([
+        {
+          type: "input",
+          name: "engineerName",
+          message: "Please enter the employee's name:",
         },
         {
           type: "input",
-          name: "username",
-          message: "Please enter GitHub username:",
-          when: function(answers) {
-            const value = answers.employeeType == "Engineer";
-            return value;
-          }
+          name: "engineerId",
+          message: "Please enter the employee's ID:",
         },
         {
           type: "input",
-          name: "school",
+          name: "engineerEmail",
+          message: "Please enter the employee's email address:",
+        },
+        {
+          type: "input",
+          name: "engineerGithub",
+          message: "Wlease enter GitHub username:",
+        },
+        {
+          type: "list",
+          name: "addAdditional",
+          message: "Do you need to add any additional employees?",
+          choices: ["All done!", "Add another"]
+        }
+        ]).then(answers => {
+          if (answers.addAdditional === "All done!") {
+            const engineer = new Engineer(answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub);
+            // console.log(engineer)
+            employee.push(engineer);
+            createSummary();
+          }
+          else if (answers.addAdditional === "Add another") {
+            const engineer = new Engineer(answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub);
+            // console.log(engineer)
+            employee.push(engineer);
+            inputAnswers();
+          }
+        })           
+      }
+    
+    function addIntern() {
+      inquirer.prompt([
+        {
+          type: "input",
+          name: "internName",
+          message: "Please enter the employee's name:",
+        },
+        {
+          type: "input",
+          name: "internId",
+          message: "Please enter the employee's ID:",
+        },
+        {
+          type: "input",
+          name: "internEmail",
+          message: "Please enter the employee's email address:",
+        },
+        {
+          type: "input",
+          name: "internSchool",
           message: "Please enter school attended:",
-          when: function(answers) {
-            const value = answers.employeeType == "Intern";
-            return value;
-          }
         },
-        // {
-        //   type: "list",
-        //   name: "addAdditional",
-        //   message: "Do you need to add any additional employees?",
-        //   choices: ["All done!", "Add another"]
-        // },  get to start over or move forward??
-      ]).then(answers => {
-        if (answers.employeeType === "Manager") {
-          const addManager = new Manager(answers.name, answers.Id, answers.email, answers.office);
-          console.log(addManager);
-          employee.push(addManager);
-          inputAnswers();
-        } else if (answers.employeeType === "Engineer") {
-          const addEngineer = new Engineer(answers.name, answers.Id, answers.email, answers.username);
-          console.log(addEngineer);
-          employee.push(addEngineer);
-          inputAnswers();
-        } else if (answers.employeeType === "Intern") {
-          const addIntern = new Intern(answers.name, answers.Id, answers.email, answers.school);
-          console.log(addIntern);
-          employee.push(addIntern);
-          inputAnswers();
-        } else if (answers.employeeType === "No additional employees needed") {
-          createSummary();
+        {
+          type: "list",
+          name: "addAdditional",
+          message: "Do you need to add any additional employees?",
+          choices: ["All done!", "Add another"]
         }
-      })
-
-      function createSummary() {
-        fs.existsSync("output") || fs.mkdirSync("output");
-        fs.writeFile(outputPath, render(employee), function (err) {
-          if (err){
-            console.log(err)
-          } else {
-            console.log("Success!")
+        ]).then(answers => {
+          if (answers.addAdditional === "All done!") {
+            const intern = new Intern(answers.internName, answers.internId, answers.internEmail, answers.internSchool);
+            // console.log(intern)
+            employee.push(intern);
+            createSummary();
           }
-          })
-        }
-
+          else if (answers.addAdditional === "Add another") {
+            const intern = new Intern(answers.internName, answers.internId, answers.internEmail, answers.internSchool);
+            // console.log(intern)
+            employee.push(intern);
+            inputAnswers();
+          }
+        })
+      }
   }
 
-  inputAnswers();
+  function createSummary() {
+    fs.existsSync("output") || fs.mkdirSync("output");
+    fs.writeFile(outputPath, render(employee), function (err) {
+      if (err){
+        console.log(err)
+        } else {
+          console.log("Success!")
+        }
+      })
+  }
 
-
-// After the user has input all employees desired, call the `render` function (required
-      // above) and pass in an array containing all employee objects; the `render` function will
-      // generate and return a block of HTML including templated divs for each employee!
-
-
-
-    // After you have your html, you're now ready to create an HTML file using the HTML
-    // returned from the `render` function. Now write it to a file named `team.html` in the
-    // `output` folder. You can use the variable `outputPath` above target this location.
-    // Hint: you may need to check if the `output` folder exists and create it if it
-    // does not.
-
-    // HINT: each employee type (manager, engineer, or intern) has slightly different
-    // information; write your code to ask different questions via inquirer depending on
-    // employee type.
-
-    // HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-    // and Intern classes should all extend from a class named Employee; see the directions
-    // for further information. Be sure to test out each class and verify it generates an
-    // object with the correct structure and methods. This structure will be crucial in order
-    // for the provided `render` function to work! ```
+  inputAnswers()
