@@ -2,7 +2,7 @@
 
   ## Description
   An easy way to build an employee summary page using prompts through npm inquire.
-  ![walkthrough](./assets/walkthrough.gif)
+  ![walkthrough](./assets/newwalkthrough.gif)
 
   ## Table of Contents
   
